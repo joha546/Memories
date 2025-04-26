@@ -15,7 +15,7 @@ app.use('/posts', postRoutes);
 
 
 // MongoDb Connection String.
-const CONNECTION_URL = 'mongodb+srv://kbin3140:QTSWQluRlzWga06I@memories.axpywq8.mongodb.net/?retryWrites=true&w=majority&appName=Memories';
+const CONNECTION_URL = 'mongodb+srv://kbin3140:mzjKkLyuT4aQFtUp@memories.ref3xfk.mongodb.net/?retryWrites=true&w=majority&appName=Memories';
 const PORT = process.env.PORT || 5000;
 
 mongoose.connect(CONNECTION_URL)
