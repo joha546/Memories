@@ -49,7 +49,7 @@ export const deletePost = async(req, res) => {
 
     await PostMessage.findByIdAndDelete(id);
 
-    res.json({message: 'Post delted succeffully'});
+    res.json({message: 'Post deleted succeffully'});
 }
 
 export const likePost = async(req, res) => {
