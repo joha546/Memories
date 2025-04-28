@@ -7,7 +7,7 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz'
 import moment from 'moment'
 
 
-const Post = ({ post }) => {
+const Post = ({ post, setCurrentId }) => {
     const classes = useStyles();
 
     return (
@@ -21,27 +21,28 @@ const Post = ({ post }) => {
             </div>
 
             <div className={classes.overlay2}>
-                <Button style={{color: 'white'}} size="small" onClick={() => {}}>
-                    <MoreHorizIcon fontSize="default" />
+                <Button style={{color: 'white'}} size="small" onClick={() => setCurrentId(post._id)}>
+                    <MoreHorizIcon fontSize="medium" />
                 </Button>
             </div>
 
             <div className={classes.details}>
-                <Typography variant="body2" color="textSecondary">{post.tags.map((tag) => `#${tag}} `)}</Typography>
+                <Typography variant="body2" color="textSecondary">{post.tags.map((tag) => `#${tag} `)}</Typography>
             </div>
             <CardContent>
-                <Typography className={classes.title} variant="h5" gutterBottom>{post.message}</Typography>
+                <Typography className={classes.title} variant="h5" gutterBottom>{post.title}</Typography>
+                <Typography variant="h6" gutterBottom>{post.message}</Typography>
             </CardContent>
 
             <CardActions className={classes.cardActions}>
                 <Button size='small' color="primary" onClick={() => {}}>
-                    <ThumbUpAltIcon fontSize="small" />
+                    <ThumbUpAltIcon fontSize="medium" />
                     Like
                     {post.likeCount}
                 </Button>
 
                 <Button size='small' color="primary" onClick={() => {}}>
-                    <DeleteIcon fontSize="small" />
+                    <DeleteIcon fontSize="medium" />
                     Delete
                     {post.likeCount}
                 </Button>
