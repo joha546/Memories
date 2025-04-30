@@ -1,14 +1,26 @@
-import React from 'react'
-import { Avatar, Button, Paper, Grid, Typography, Container, TextField } from '@material-ui/core';
+import React, {useState} from 'react'
+import { Avatar, Button, Paper, Grid, Typography, Container, TextField, emphasize } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
+import { GoogleLogin } from '@react-oauth/google';
+import { useDispatch } from 'react-redux';
+import jwt_decode from 'jwt-decode';
 
 import useStyles from './styles'
 import Input from './Input.js'
+import Icon from './Icon.js'
 
 const Auth = () => {
     // const state = null;
-    const isSignup = false;
+    const [isSignup, setIsSignup] = useState(false);
     const classes = useStyles();
+
+    const dispatch = useDispatch();
+
+    const [showPassword, setShowPassword] = useState(false);
+
+    const handleShowPassword = () => setShowPassword((prevShowPassword) => 
+        !prevShowPassword
+    );
 
     const handleSubmit= () => {
 
@@ -17,6 +29,51 @@ const Auth = () => {
     const handleChange = () => {
 
     }
+
+    const switchMode = () => {
+        setIsSignup((prevIsSignup) => !prevIsSignup)
+        handleShowPassword(false);
+    }
+
+
+    // current Implementation of the googleSuccess function is designed for the old Google API (react-google-login package)
+    // const googleSuccess = async(credentialResponse) => {
+    //     // console.log("Google Login Success:", credentialResponse);
+
+    //     const result = credentialResponse?.profileObj;
+    //     const token = credentialResponse?.tokenId;
+
+    //     try{
+    //         dispatch({ type: 'AUTH', data: {result, token} });
+    //     }
+    //     catch(error){
+    //         console.log(error);
+    //     }
+    // };
+
+    const googleSuccess = async(credentialResponse) => {
+        try {
+            const token = credentialResponse?.credential;
+            const decoded = jwt_decode(token);
+
+            const result = {
+                name: decoded.name,
+                email: decoded.email,
+                googleId: decoded.sub,
+                picture: decoded.picture
+            };
+            dispatch({ type: 'AUTH', data: { result, token } });
+
+        } catch (error) {
+            console.log("Google Login Error:", error);
+        }
+    }
+
+
+    const googleFailure = (error) => {
+        console.log("Google Login Failed:", error);
+    };
+
 
   return (
     <Container component='main' maxWidth='xs'>
@@ -32,10 +89,32 @@ const Auth = () => {
                         isSignup && (
                             <>
                                 <Input name='firstName' label='FirstName' handleChange={handleChange} autoFocus half />
-                                <Input name='firstName' label='FirstName' handleChange={handleChange} autoFocus half />
+                                <Input name='lastName' label='LastName' handleChange={handleChange} autoFocus half />
                             </>
                         )
                     }
+                    <Input name="email" label="Email Address" handleChange={handleChange} type="email" />
+                    <Input name="password" label="Password" handleChange={handleChange} type={showPassword ? "text" : "password"} handleShowPassword={handleShowPassword} />
+                    {isSignup && <Input name="confirmPassword" label="Repeat Password" handleChange={handleChange} type="password" />}
+                </Grid>
+                
+                <Grid item xs={12}>
+                    <GoogleLogin
+                        onSuccess={googleSuccess}
+                        onError={googleFailure}
+                    />
+                </Grid>
+
+                <Button type="submit" fullWidth variant="contained" color='primary' className={classes.submit}>
+                    {isSignup ? "Sign UP" : "Sign In"}
+                </Button>
+
+                <Grid container justifyContent='flex-end'>
+                    <Grid item>
+                        <Button onClick={switchMode}>
+                            {isSignup ? "Already have account? SignIn" : "Don't have an account? SignUP"}
+                        </Button>
+                    </Grid>
                 </Grid>
             </form>
         </Paper>
