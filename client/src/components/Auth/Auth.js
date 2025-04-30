@@ -10,9 +10,17 @@ import useStyles from './styles'
 import Input from './Input.js'
 import Icon from './Icon.js'
 
+const initialState = {
+    firstName : '',
+    lastName : '',
+    email : '',
+    password : '',
+    confirmPassword : ''
+}
 const Auth = () => {
     // const state = null;
     const [isSignup, setIsSignup] = useState(false);
+    const [formData, setFormData] = useState(initialState);
     const classes = useStyles();
     const history = useHistory();
 
@@ -24,12 +32,13 @@ const Auth = () => {
         !prevShowPassword
     );
 
-    const handleSubmit= () => {
-
+    const handleSubmit= (e) => {
+        e.preventDefault();
+        console.log(formData);
     }
 
-    const handleChange = () => {
-
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name] : e.target.value})
     }
 
     const switchMode = () => {
