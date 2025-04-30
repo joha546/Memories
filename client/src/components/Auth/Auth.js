@@ -9,14 +9,16 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min.js';
 import useStyles from './styles'
 import Input from './Input.js'
 import Icon from './Icon.js'
+import {signup, signin} from '../../actions/auth.js';
 
 const initialState = {
     firstName : '',
     lastName : '',
     email : '',
     password : '',
-    confirmPassword : ''
-}
+    confirmPassword : ''  // ✅ must match exactly
+};
+
 const Auth = () => {
     // const state = null;
     const [isSignup, setIsSignup] = useState(false);
@@ -32,10 +34,16 @@ const Auth = () => {
         !prevShowPassword
     );
 
-    const handleSubmit= (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(formData);
-    }
+        console.log("Submitting form data:", formData); // 👈 ADD THIS
+        if (isSignup) {
+            dispatch(signup(formData, history));
+        } else {
+            dispatch(signin(formData, history));
+        }
+    };
+    
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name] : e.target.value})
@@ -43,7 +51,7 @@ const Auth = () => {
 
     const switchMode = () => {
         setIsSignup((prevIsSignup) => !prevIsSignup)
-        handleShowPassword(false);
+        setShowPassword(false);
     }
 
 

@@ -19,7 +19,7 @@ export const signin = async(req, res) => {
         }
 
         // if password is correct, get the jwt and send it to the frontend.
-        const token = jwt.sign({ email: existingUser.email, id: existingUser.User._id }, 'test', {expiresIn : "1h"});
+        const token = jwt.sign({ email: existingUser.email, id: existingUser._id }, 'test', {expiresIn : "1h"});
         res.status(200).json({ result : existingUser, token })
 
     } catch (error) {
@@ -28,7 +28,9 @@ export const signin = async(req, res) => {
 }
 
 export const signup = async(req, res) => {
-    const { email, password, confirmPasswsord, firstName, lastName } = req.body;
+    const { email, password, confirmPassword, firstName, lastName } = req.body;
+    console.log("Request Body:", req.body);
+
 
     try {
         const existingUser = await User.findOne({ email });
@@ -37,7 +39,7 @@ export const signup = async(req, res) => {
             return res.status(400).json({ message : "User already exists." });
         }
 
-        if(password !== confirmPasswsord){
+        if(password !== confirmPassword){
             return res.status(400).json({ message: "Password doesn't match" })
         }
 
