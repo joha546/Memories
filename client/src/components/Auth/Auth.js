@@ -4,6 +4,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import { GoogleLogin } from '@react-oauth/google';
 import { useDispatch } from 'react-redux';
 import jwt_decode from 'jwt-decode';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min.js';
 
 import useStyles from './styles'
 import Input from './Input.js'
@@ -13,6 +14,7 @@ const Auth = () => {
     // const state = null;
     const [isSignup, setIsSignup] = useState(false);
     const classes = useStyles();
+    const history = useHistory();
 
     const dispatch = useDispatch();
 
@@ -63,6 +65,8 @@ const Auth = () => {
                 picture: decoded.picture
             };
             dispatch({ type: 'AUTH', data: { result, token } });
+
+            history.push('/');
 
         } catch (error) {
             console.log("Google Login Error:", error);
