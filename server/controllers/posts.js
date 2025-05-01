@@ -15,7 +15,7 @@ export const getPosts = async (req, res) => {
 export const createPost = async (req, res) => {
     const post = req.body;
 
-    const newPost = new PostMessage(post);
+    const newPost = new PostMessage({ ...post, creator: req.userId, createdAt: new Date().toISOString()});
 
     try {
         await newPost.save();  // newPost
@@ -56,7 +56,7 @@ export const likePost = async(req, res) => {
     const { id } = req.params;
 
     if(!req.userId){
-        res.json({ message: "Unauthenticated." });
+        return res.status(401).json({ message: "Unauthenticated." });
     }
 
     if(!mongoose.Types.ObjectId.isValid(id)) {
@@ -65,7 +65,7 @@ export const likePost = async(req, res) => {
 
     const post = await PostMessage.findById(id);
 
-    const index = post.liks.findIndex((id) => id === String(req.userId));
+    const index = post.likes.findIndex((id) => id === String(req.userId));
     if(index === -1){
         // like the post
         post.likes.push(req.userId);
