@@ -31,7 +31,7 @@ const auth = async(req, res, next) => {
         next();
     } catch (error) {
         console.error("Auth Middleware Error:", error.message);
-        res.status(401).json({ message: "Unauthorized access", error: error.message });
+        res.status(401).json({ message: "Unauthorized access" });
     }
     
 }
