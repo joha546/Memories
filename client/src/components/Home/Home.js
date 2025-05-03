@@ -2,14 +2,13 @@ import React, {useState, useEffect } from 'react'
 import { Container, Grow, Grid, Paper, AppBar, TextField, Button, Chip } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
-import CHipInput from 'material-ui-chip-input'
+import ChipInput from 'material-ui-chip-input'
 
 import Posts from '../Posts/Posts'
 import Form from '../Forms/Form'
-import {getPosts} from '../../actions/posts'
+import {getPosts, fetchPostsBySearch } from '../../actions/posts'
 import Pagination from '../Pagination.jsx';
 import useStyles from './styles.js'
-import ChipInput from 'material-ui-chip-input';
 
 function useQuery() {
     return new URLSearchParams(useLocation().search);
@@ -25,7 +24,7 @@ const Home = () => {
     const query = useQuery();
     const history = useHistory();
     const page = query.get('page') || 1;
-    const searchQuer = query.get('searchQuery');
+    const searchQuery = query.get('searchQuery');
     const classes = useStyles();
     const [search, setSearch] = useState('');
     const [tags, setTags] = useState([]);
@@ -35,11 +34,25 @@ const Home = () => {
         dispatch(getPosts());
     }, [dispatch]);
 
-    const handleKeyPRESS = (e) => {
-        if(e.keyCode === 13){
-            // search post.
+    const searchPost = () => {
+        if(search.trim() || tags){
+            // dispatch -> fetch search posts.
+            dispatch(fetchPostsBySearch({ search, tags: tags.join(',') }));
+
+            // Client side routing.
+            history.push(`/posts/search?searchQuery=${search || 'none'}&tags.join(',')`);
+        }
+        else{
+            history.push('/');
         }
     }
+
+    const handleKeyPRESS = (e) => {
+        if(e.key === 'Enter') {
+          searchPost();
+        }
+    };
+      
 
     const handleAdd = (tag) => setTags([...tags, tag]);
 
@@ -56,7 +69,7 @@ const Home = () => {
                <Grid item xs={12} sm={6} md={3}>
                 <AppBar className={classes.appBarSearch} position='static' color='inherit'>
                     <TextField name='search' variant='outlined' label='Search Memories'
-                        onKeyPress={handleKeyPRESS}
+                        onKeyDown={handleKeyPRESS}
                         fullWidth
                         value= {search}
                         onChange={(e) => setSearch(e.target.value)}
@@ -71,6 +84,7 @@ const Home = () => {
                         variant='outlined'
                     />
                     
+                    <Button onClick={searchPost} className={classes.searchButton} variant='contained' color='primary'>Search</Button>
                 </AppBar>
                     <Form currentId={currentId} setCurrentId={setCurrentId}/>
                     <Paper elevation={6}>
